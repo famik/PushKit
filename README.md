@@ -6,20 +6,20 @@
 * **添加JitPack仓库到你项目的根build.gradle**
 <br>Add JitPack repository in your root build.gradle:
 ```
-	allprojects {
-		repositories {
-			...
-			maven { url 'https://jitpack.io' }
-		}
-	}
+    allprojects {
+        repositories {
+            ...
+            maven { url 'https://jitpack.io' }
+        }
+    }
 ```
 
 * **添加依赖到你的app的build.gradle**
 <br>Add the dependency:
 ```
-	dependencies {
-	    implementation 'com.github.famik:pushkit:1.0.5'
-	}
+    dependencies {
+        implementation 'com.github.famik:pushkit:1.0.5'
+    }
 ```
 
 * **配置AppId / AppKey**
