@@ -48,8 +48,10 @@ public class PushKit {
      * <p>
      * 目前只支持华为和小米，如果不是华为手机则使用小米推送。
      * @param context Application Context
+     * <p>
+     * 如果 context 同时是 {@link Delegate}, 初始化会自动调用 setDelegate
      *
-     * @see #init(Context, Delegate)
+     * @see #setDelegate
      */
     public static void init(Context context) {
         switch (Build.MANUFACTURER.toLowerCase()) {
@@ -60,6 +62,10 @@ public class PushKit {
                 pushRegistry = new MiPushRegistry();
         }
         pushRegistry.init(context);
+        handler = new Handler(Looper.getMainLooper());
+        if (context instanceof Delegate) {
+            setDelegate((Delegate) context);
+        }
     }
 
 
@@ -67,29 +73,9 @@ public class PushKit {
      * 设置 Delegate 回调接口
      *
      * @param delegate {@link Delegate}
-     *
-     * @see #init(Context, Delegate)
      */
     public static void setDelegate(Delegate delegate) {
-        if (handler == null) {
-            handler = new Handler(Looper.getMainLooper());
-        }
         PushKit.delegate = delegate;
-    }
-
-
-    /**
-     * 初始化 PushKit 并设置回调接口
-     *
-     * @param context Application Context
-     * @param delegate {@link Delegate}
-     *
-     * @see #init(Context)
-     * @see #setDelegate
-     */
-    public static void init(Context context, Delegate delegate) {
-        setDelegate(delegate);
-        init(context);
     }
 
 
@@ -112,7 +98,6 @@ public class PushKit {
      *  </li>
      * </ol>
      * @see Delegate#onPushTokenUpdated
-     * @see #init(Context, Delegate)
      */
     public static void updateToken() {
         if (pushRegistry != null) {
@@ -137,6 +122,9 @@ public class PushKit {
     private static PushRegistry pushRegistry;
 
     static void handleTokenUpdated(final Context context, final String token) {
+        if (delegate == null) {
+            return;
+        }
         handler.post(new Runnable() {
             @Override
             public void run() {
@@ -148,6 +136,9 @@ public class PushKit {
     }
 
     static void handleMessageReceived(final Context context, final String msg) {
+        if (delegate == null) {
+            return;
+        }
         handler.post(new Runnable() {
             @Override
             public void run() {
